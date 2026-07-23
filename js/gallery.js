@@ -177,44 +177,16 @@ document.addEventListener('DOMContentLoaded', () => {
     '小红书 ②': 'assets/images/《小红书2》.jpg',
   };
 
-  // ====== 懒加载：Intersection Observer 可见时才加载封面 ======
-  const coverObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const card = entry.target;
-      coverObserver.unobserve(card);
-      loadCardCover(card);
-    });
-  }, { rootMargin: '300px' }); // 提前 300px 开始加载
-
+  // ====== 封面加载：直接用 innerHTML 设 img，浏览器原生加载最可靠 ======
   document.querySelectorAll('.gallery-card').forEach(card => {
-    coverObserver.observe(card);
-  });
-
-  function loadCardCover(card) {
     const title = card.dataset.title;
     if (!title) return;
     const imgContainer = card.querySelector('.gallery-card-img');
     if (!imgContainer) return;
-    const fallbackBg = imgContainer.style.background;
 
-    // 1. 优先使用本地封面
+    // 1. 优先用本地封面
     if (LOCAL_COVERS[title]) {
-      const img = new Image();
-      img.alt = title;
-      const applyCover = () => {
-        imgContainer.textContent = '';
-        imgContainer.style.background = '';
-        imgContainer.style.fontSize = '';
-        imgContainer.appendChild(img);
-      };
-      img.onload = applyCover;
-      img.onerror = () => {};
-      img.src = LOCAL_COVERS[title];
-      // 处理已缓存图片（同步完成加载，onload 不触发的情况）
-      if (img.complete && img.naturalWidth > 0) {
-        applyCover();
-      }
+      imgContainer.innerHTML = `<img src="${LOCAL_COVERS[title]}" alt="${title}">`;
       return;
     }
 
@@ -237,26 +209,10 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(data => {
         if (data.code === 0 && data.data && data.data.pic) {
           const coverUrl = data.data.pic.replace(/^http:/, 'https:');
-          const img = document.createElement('img');
-          img.alt = title;
-          const applyBili = () => {
-            imgContainer.textContent = '';
-            imgContainer.style.background = '';
-            imgContainer.style.fontSize = '';
-            imgContainer.appendChild(img);
-          };
-          img.onload = applyBili;
-          img.onerror = () => {
-            imgContainer.style.background = fallbackBg;
-            imgContainer.style.fontSize = '48px';
-            imgContainer.textContent = '🎬';
-            img.remove();
-          };
-          img.src = coverUrl;
-          if (img.complete && img.naturalWidth > 0) applyBili();
+          imgContainer.innerHTML = `<img src="${coverUrl}" alt="${title}">`;
         }
       })
       .catch(() => {});
-  }
+  });
 
 });
