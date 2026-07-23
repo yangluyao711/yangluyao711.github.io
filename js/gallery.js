@@ -188,14 +188,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (LOCAL_COVERS[title]) {
       const img = new Image();
       img.alt = title;
-      img.onload = () => {
+      const applyCover = () => {
         imgContainer.textContent = '';
         imgContainer.style.background = '';
         imgContainer.style.fontSize = '';
         imgContainer.appendChild(img);
       };
-      img.onerror = () => {}; // 失败保留 emoji
+      img.onload = applyCover;
+      img.onerror = () => {};
       img.src = LOCAL_COVERS[title];
+      // 处理已缓存图片（同步完成加载，onload 不触发的情况）
+      if (img.complete && img.naturalWidth > 0) {
+        applyCover();
+      }
       return;
     }
 
@@ -220,12 +225,13 @@ document.addEventListener('DOMContentLoaded', () => {
           const coverUrl = data.data.pic.replace(/^http:/, 'https:');
           const img = document.createElement('img');
           img.alt = title;
-          img.onload = () => {
+          const applyBili = () => {
             imgContainer.textContent = '';
             imgContainer.style.background = '';
             imgContainer.style.fontSize = '';
             imgContainer.appendChild(img);
           };
+          img.onload = applyBili;
           img.onerror = () => {
             imgContainer.style.background = fallbackBg;
             imgContainer.style.fontSize = '48px';
@@ -233,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
             img.remove();
           };
           img.src = coverUrl;
+          if (img.complete && img.naturalWidth > 0) applyBili();
         }
       })
       .catch(() => {});
