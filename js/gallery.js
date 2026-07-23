@@ -177,7 +177,21 @@ document.addEventListener('DOMContentLoaded', () => {
     '小红书 ②': 'assets/images/《小红书2》.jpg',
   };
 
+  // ====== 懒加载：Intersection Observer 可见时才加载封面 ======
+  const coverObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const card = entry.target;
+      coverObserver.unobserve(card);
+      loadCardCover(card);
+    });
+  }, { rootMargin: '300px' }); // 提前 300px 开始加载
+
   document.querySelectorAll('.gallery-card').forEach(card => {
+    coverObserver.observe(card);
+  });
+
+  function loadCardCover(card) {
     const title = card.dataset.title;
     if (!title) return;
     const imgContainer = card.querySelector('.gallery-card-img');
@@ -243,6 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       })
       .catch(() => {});
-  });
+  }
 
 });
