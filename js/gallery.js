@@ -184,9 +184,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const imgContainer = card.querySelector('.gallery-card-img');
     if (!imgContainer) return;
 
-    // 1. 优先用本地封面
+    // 1. 优先用本地封面（emoji 占位 → onload 替换）
     if (LOCAL_COVERS[title]) {
-      imgContainer.innerHTML = `<img src="${LOCAL_COVERS[title]}" alt="${title}">`;
+      const img = new Image();
+      img.alt = title;
+      img.onload = () => {
+        imgContainer.textContent = '';
+        imgContainer.style.background = '';
+        imgContainer.style.fontSize = '';
+        imgContainer.appendChild(img);
+      };
+      img.src = LOCAL_COVERS[title];
       return;
     }
 
@@ -209,7 +217,15 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(data => {
         if (data.code === 0 && data.data && data.data.pic) {
           const coverUrl = data.data.pic.replace(/^http:/, 'https:');
-          imgContainer.innerHTML = `<img src="${coverUrl}" alt="${title}">`;
+          const img = document.createElement('img');
+          img.alt = title;
+          img.onload = () => {
+            imgContainer.textContent = '';
+            imgContainer.style.background = '';
+            imgContainer.style.fontSize = '';
+            imgContainer.appendChild(img);
+          };
+          img.src = coverUrl;
         }
       })
       .catch(() => {});
