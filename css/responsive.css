@@ -1,0 +1,178 @@
+/* ============================================
+   响应式 — 移动端 / 平板 / 桌面
+   ============================================ */
+
+/* ---------- 平板 (≤1024px) ---------- */
+@media (max-width: 1024px) {
+  :root {
+    --section-padding: 100px 0;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .exp-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .ai-features {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .gallery-card {
+    flex: 0 0 280px;
+  }
+
+  .modal {
+    padding: 32px;
+    width: 95vw;
+  }
+}
+
+/* ---------- 移动端 (≤768px) ---------- */
+@media (max-width: 768px) {
+  :root {
+    --section-padding: 80px 0;
+  }
+
+  /* 导航移动端 */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    flex-direction: column;
+    gap: 0;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    padding: 80px 32px 32px;
+    transition: right var(--transition-smooth);
+    border-left: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .nav-links.open {
+    right: 0;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 14px 0;
+    font-size: 17px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+
+  /* Hero */
+  .hero-name {
+    font-size: clamp(40px, 12vw, 64px);
+  }
+
+  .hero-tagline {
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  /* About */
+  .about-card {
+    padding: 28px 24px;
+  }
+
+  /* Timeline */
+  .timeline {
+    padding-left: 24px;
+  }
+
+  .timeline-content {
+    padding: 20px;
+  }
+
+  /* Experience */
+  .exp-card {
+    padding: 24px;
+  }
+
+  .exp-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* AI features */
+  .ai-feature {
+    padding: 24px;
+  }
+
+  /* Gallery */
+  .gallery-card {
+    flex: 0 0 260px;
+    min-height: 240px;
+  }
+
+  .gallery-arrow {
+    opacity: 1;
+    width: 36px;
+    height: 36px;
+  }
+
+  .gallery::before,
+  .gallery::after {
+    width: 30px;
+  }
+
+  /* Contact */
+  .contact-grid {
+    flex-direction: column;
+  }
+
+  .contact-card {
+    justify-content: center;
+  }
+
+  /* Modal */
+  .modal {
+    padding: 28px 24px;
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 90vh;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .modal-overlay {
+    align-items: flex-end;
+  }
+
+  .modal-overlay.open .modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal {
+    transform: translateY(100%) scale(1);
+  }
+}
+
+/* ---------- 小屏手机 (≤400px) ---------- */
+@media (max-width: 400px) {
+  .section-inner {
+    padding: 0 16px;
+  }
+
+  .gallery-card {
+    flex: 0 0 230px;
+  }
+
+  .glass-card {
+    padding: 20px;
+  }
+}
