@@ -177,24 +177,20 @@ document.addEventListener('DOMContentLoaded', () => {
     '小红书 ②': 'assets/images/xhs2.jpg',
   };
 
-  // ====== 封面加载：直接用 innerHTML 设 img，浏览器原生加载最可靠 ======
+  // ====== 封面加载：CSS background-image，浏览器并行加载，无需等 onload ======
   document.querySelectorAll('.gallery-card').forEach(card => {
     const title = card.dataset.title;
     if (!title) return;
     const imgContainer = card.querySelector('.gallery-card-img');
     if (!imgContainer) return;
 
-    // 1. 优先用本地封面（emoji 占位 → onload 替换）
+    // 1. 优先用本地封面（CSS background-image，浏览器并行瞬间加载）
     if (LOCAL_COVERS[title]) {
-      const img = new Image();
-      img.alt = title;
-      img.onload = () => {
-        imgContainer.textContent = '';
-        imgContainer.style.background = '';
-        imgContainer.style.fontSize = '';
-        imgContainer.appendChild(img);
-      };
-      img.src = LOCAL_COVERS[title];
+      imgContainer.textContent = '';
+      imgContainer.style.fontSize = '';
+      imgContainer.style.backgroundImage = `url(${LOCAL_COVERS[title]})`;
+      imgContainer.style.backgroundSize = 'cover';
+      imgContainer.style.backgroundPosition = 'center';
       return;
     }
 
@@ -216,16 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(res => res.json())
       .then(data => {
         if (data.code === 0 && data.data && data.data.pic) {
-          const coverUrl = data.data.pic.replace(/^http:/, 'https:');
-          const img = document.createElement('img');
-          img.alt = title;
-          img.onload = () => {
-            imgContainer.textContent = '';
-            imgContainer.style.background = '';
-            imgContainer.style.fontSize = '';
-            imgContainer.appendChild(img);
-          };
-          img.src = coverUrl;
+          imgContainer.textContent = '';
+          imgContainer.style.fontSize = '';
+          imgContainer.style.backgroundImage = `url(${data.data.pic.replace(/^http:/, 'https:')})`;
+          imgContainer.style.backgroundSize = 'cover';
+          imgContainer.style.backgroundPosition = 'center';
         }
       })
       .catch(() => {});
