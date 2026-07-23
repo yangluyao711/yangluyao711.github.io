@@ -187,15 +187,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. 优先使用本地封面
     if (LOCAL_COVERS[title]) {
       const img = new Image();
-      img.src = LOCAL_COVERS[title];
       img.alt = title;
-      img.onload = () => {
+      const setCover = () => {
         imgContainer.textContent = '';
         imgContainer.style.background = '';
         imgContainer.style.fontSize = '';
         imgContainer.appendChild(img);
       };
-      img.onerror = () => {}; // 加载失败保留 emoji
+      img.onload = setCover;
+      img.onerror = () => {
+        console.warn('Cover load failed:', title);
+      };
+      // 如果图片已缓存（complete=true），直接触发
+      if (img.complete) {
+        setCover();
+      }
+      img.src = LOCAL_COVERS[title];
+      return;
+    }
       return;
     }
 
@@ -218,19 +227,23 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(data => {
         if (data.code === 0 && data.data && data.data.pic) {
           const coverUrl = data.data.pic.replace(/^http:/, 'https:');
-          imgContainer.textContent = '';
-          imgContainer.style.background = '';
-          imgContainer.style.fontSize = '';
           const img = document.createElement('img');
-          img.src = coverUrl;
           img.alt = title;
+          const setBiliCover = () => {
+            imgContainer.textContent = '';
+            imgContainer.style.background = '';
+            imgContainer.style.fontSize = '';
+            imgContainer.appendChild(img);
+          };
+          img.onload = setBiliCover;
           img.onerror = () => {
             imgContainer.style.background = fallbackBg;
             imgContainer.style.fontSize = '48px';
             imgContainer.textContent = '🎬';
             img.remove();
           };
-          imgContainer.appendChild(img);
+          if (img.complete) setBiliCover();
+          img.src = coverUrl;
         }
       })
       .catch(() => {});
